@@ -87,14 +87,27 @@ angular.module('starter.controllers', [])
 
   $scope.setWaypoints = function(waypointList, scavengerMode) {
     for (var i = 0, j = waypointList.length; i < j; i++) {
+      var position = new google.maps.LatLng(waypointList[i].position.J, waypointList[i].position.M);
       var waypoint = new google.maps.Marker({
         map: $scope.map,
         icon: preIcon + labels[i % labels.length] + '|F78181',
-        position: new google.maps.LatLng(waypointList[i].position.J, waypointList[i].position.M)
+        position: position
+      });
+
+      var circle = new google.maps.Circle({
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        map: $scope.map,
+        center: geo.computeOffset(position, Math.random() * 450, Math.random() * 360),
+        radius: 500
       });
 
       if (scavengerMode) {
         waypoint.setVisible(false);
+      } else {
+        circle.setVisible(false);
       }
 
       waypoint.id = i;
@@ -106,6 +119,7 @@ angular.module('starter.controllers', [])
       });
 
       $scope.waypoints.push(waypoint);
+      $scope.searchCircles.push(circle);
     }
 
     $scope.waypointList = waypointList;
@@ -227,6 +241,8 @@ angular.module('starter.controllers', [])
       $scope.waypoints[$rootScope.huntProgress]
         .setIcon(preIcon + labels[$rootScope.huntProgress % labels.length] + '|2EFE64');
       $scope.waypoints[$rootScope.huntProgress].setVisible(true);
+      $scope.searchCircles[$rootScope.huntProgress].setVisible(false);
+
       $rootScope.previousLocation = $scope.waypointList[$rootScope.huntProgress];
       $rootScope.huntProgress++;
       $rootScope.nextDestination = $scope.waypointList[$rootScope.huntProgress] ?
