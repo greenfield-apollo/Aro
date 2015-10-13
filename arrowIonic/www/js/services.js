@@ -27,4 +27,9 @@ angular.module('starter.services', [])
     var huntsRef = new Firebase('https://boiling-heat-1054.firebaseio.com/hunts');
     return $firebaseArray(huntsRef);
   }
-]);
+])
+
+.factory("Auth", function($firebaseAuth) {
+  var usersRef = new Firebase("https//boiling-heat-1054.firebaseio.com/users");
+  return $firebaseAuth(usersRef);
+});

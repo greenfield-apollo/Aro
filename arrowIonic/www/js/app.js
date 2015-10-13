@@ -7,8 +7,10 @@
 
 angular.module('starter', ['ionic', 'firebase', 'starter.services', 'starter.controllers', 'ngCordova'])
 
-.config(function($ionicConfigProvider) {
+.config(function($ionicConfigProvider, $httpProvider) {
   $ionicConfigProvider.tabs.position('bottom');
+  $httpProvider.defaults.useXDomain = true;
+  delete $httpProvider.defaults.headers.common['X-Requested-With'];
 })
 
 .run(function($ionicPlatform) {

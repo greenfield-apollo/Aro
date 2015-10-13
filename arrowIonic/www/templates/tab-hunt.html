@@ -1,5 +1,9 @@
 <ion-view view-title="Hunt">
-    <ion-content>
+    <div class="bar bar-header bar-positive">
+      <h1 class="title">Select a Scavenger Hunt</h1>
+      <button class="button button-positive" ng-hide="authData" on-tap="login()">Login</button>
+    </div>
+    <ion-content class="has-header">
       <button ng-repeat="(key, value) in allHunts" class="button button-positive button-full" ng-click="loadHunt(value)">
         {{ value.name }}
       </button>
