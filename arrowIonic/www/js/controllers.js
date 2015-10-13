@@ -27,31 +27,6 @@ angular.module('starter.controllers', [])
     delete $scope.newHunt.scavenger;
   });
 
-  $rootScope.switchMode = function() {
-    if ($scope.mode === 'hunt') { // Pressing the "add a new Scavenger Hunt +" button
-      $rootScope.createHunt();
-    } else {
-      // simulate loading
-      var testHunt = {
-        "name": "Dev Test Hunt",
-        "waypoints": [
-          {
-            "position":{"J":34.13848453006043,"M":-117.50534534454346},
-            "name":"First destination",
-            "description":"Wow, you finally got to a destination!"
-          },
-          {
-            "position":{"J":34.14342171108033,"M":-117.49684810638428},
-            "name":"Final destination",
-            "description":"Yeah, this is a pretty short scavenger hunt."
-          }
-        ],
-        "scavenger": true
-      };
-      $rootScope.loadHunt(testHunt);
-    }
-  };
-
   $rootScope.createHunt = function() {
     $scope.mode = 'create';
     $scope.clearWaypoints();
