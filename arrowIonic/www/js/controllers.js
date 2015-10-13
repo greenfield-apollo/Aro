@@ -6,6 +6,7 @@ angular.module('starter.controllers', [])
   $scope.waypointList = [];
   $scope.searchCircles = [];
   $scope.selectedID = null;
+  $scope.scavenger = false;
   $rootScope.huntProgress = null;
   $rootScope.previousLocation = null;
   $rootScope.nextDestination = null;
@@ -26,31 +27,6 @@ angular.module('starter.controllers', [])
     delete $scope.newHunt.scavenger;
   });
 
-  $rootScope.switchMode = function() {
-    if ($scope.mode === 'hunt') { // Pressing the "add a new Scavenger Hunt +" button
-      $rootScope.createHunt();
-    } else {
-      // simulate loading
-      var testHunt = {
-        "name": "Dev Test Hunt",
-        "waypoints": [
-          {
-            "position":{"J":34.13848453006043,"M":-117.50534534454346},
-            "name":"First destination",
-            "description":"Wow, you finally got to a destination!"
-          },
-          {
-            "position":{"J":34.14342171108033,"M":-117.49684810638428},
-            "name":"Final destination",
-            "description":"Yeah, this is a pretty short scavenger hunt."
-          }
-        ],
-        "scavenger": true
-      };
-      $rootScope.loadHunt(testHunt);
-    }
-  };
-
   $rootScope.createHunt = function() {
     $scope.mode = 'create';
     $scope.clearWaypoints();
@@ -61,7 +37,8 @@ angular.module('starter.controllers', [])
     $scope.mode = 'hunt';
     $scope.huntName = hunt.name;
     $scope.clearWaypoints();
-    $scope.setWaypoints(hunt.waypoints, hunt.scavenger);
+    $scope.scavenger = hunt.scavenger;
+    $scope.setWaypoints(hunt.waypoints);
     $rootScope.huntProgress = null;
     $scope.getNextDestination();
     $state.go('tab.compass');
@@ -85,7 +62,7 @@ angular.module('starter.controllers', [])
     $state.go('tab.hunt');
   };
 
-  $scope.setWaypoints = function(waypointList, scavengerMode) {
+  $scope.setWaypoints = function(waypointList) {
     for (var i = 0, j = waypointList.length; i < j; i++) {
       var position = new google.maps.LatLng(waypointList[i].position.J, waypointList[i].position.M);
       var waypoint = new google.maps.Marker({
@@ -101,13 +78,12 @@ angular.module('starter.controllers', [])
         fillColor: '#FF0000',
         map: $scope.map,
         center: geo.computeOffset(position, Math.random() * 450, Math.random() * 360),
-        radius: 500
+        radius: 500,
+        visible: false
       });
 
-      if (scavengerMode) {
+      if ($scope.scavenger) {
         waypoint.setVisible(false);
-      } else {
-        circle.setVisible(false);
       }
 
       waypoint.id = i;
@@ -236,6 +212,9 @@ angular.module('starter.controllers', [])
       if ($scope.waypointList.length > 0) {
         $rootScope.nextDestination = $scope.waypointList[0];
         $rootScope.huntProgress = 0;
+        if ($scope.scavenger) {
+          $scope.searchCircles[0].setVisible(true);
+        }
       }
     } else {
       $scope.waypoints[$rootScope.huntProgress]
@@ -245,8 +224,15 @@ angular.module('starter.controllers', [])
 
       $rootScope.previousLocation = $scope.waypointList[$rootScope.huntProgress];
       $rootScope.huntProgress++;
-      $rootScope.nextDestination = $scope.waypointList[$rootScope.huntProgress] ?
-        $scope.waypointList[$rootScope.huntProgress] : null;
+
+      if ($scope.waypointList[$rootScope.huntProgress]) {
+        if ($scope.scavenger) {
+          $scope.searchCircles[$rootScope.huntProgress].setVisible(true);
+        }
+        $rootScope.nextDestination = $scope.waypointList[$rootScope.huntProgress]
+      } else {
+        $rootScope.nextDestination = null;
+      }
     }
   };
 
