@@ -5,11 +5,16 @@
       <h1 class="title" ng-show="!nextDestination && !huntProgress">No Waypoint Loaded</h1>
       <h1 class="title" ng-show="!nextDestination && huntProgress">Destination Reached</h1>
       <h1 class="title" ng-show="nextDestination">Next Location: {{nextDestination.name}}</h1>
+      <!--
       <button class="button button-positive" ng-hide="authData" on-tap="login()">Login</button>
+      -->
     </div>
-    <div class="bar bar-subheader bar-positive" ng-show="nextDestination">
+    <div class="bar bar-subheader bar-positive" ng-if="nextDestination">
       <h1 class="title">{{distance.toFixed(2)}} miles to your destination</h1>
-    </div>
+      </div>
+      <div class="bar bar-subheader bar-balanced" ng-if="!nextDestination">
+      <h1 class="title">You Win!</h1>
+      </div>
     <ion-content class="has-subheader" padding="true">
       <h4 class="title" ng-show="huntProgress === null"></h4>
       <h4 class="title" ng-show="huntProgress === 0">Welcome!</h4>
