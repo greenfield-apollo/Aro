@@ -34,6 +34,7 @@ angular.module('starter.controllers', [])
   };
 
   $rootScope.loadHunt = function(hunt) {
+    console.log(hunt);
     $scope.mode = 'hunt';
     $scope.huntName = hunt.name;
     $scope.clearWaypoints();
@@ -45,11 +46,20 @@ angular.module('starter.controllers', [])
   };
 
   $scope.preSave = function() {
-    $rootScope.saveHunt({
+    var savedHunt = {
       name: $scope.newHunt.name,
       waypoints: $scope.waypointList,
       scavenger: $scope.newHunt.scavenger || false
-    });
+    };
+
+    for (var i = 0, j = savedHunt.waypoints.length; i < j; i++) {
+      savedHunt.waypoints[i].position = {
+        J: savedHunt.waypoints[i].position.lat(),
+        M: savedHunt.waypoints[i].position.lng()
+      };
+    }
+
+    $rootScope.saveHunt(savedHunt);
     $scope.saveModal.hide();
 
     $scope.mode = 'hunt';
@@ -64,11 +74,11 @@ angular.module('starter.controllers', [])
 
   $scope.setWaypoints = function(waypointList) {
     for (var i = 0, j = waypointList.length; i < j; i++) {
-      var position = new google.maps.LatLng(waypointList[i].position.J, waypointList[i].position.M);
+      waypointList[i].position = new google.maps.LatLng(waypointList[i].position.J, waypointList[i].position.M);
       var waypoint = new google.maps.Marker({
         map: $scope.map,
         icon: preIcon + labels[i % labels.length] + '|F78181',
-        position: position
+        position: waypointList[i].position
       });
 
       var circle = new google.maps.Circle({
@@ -77,7 +87,7 @@ angular.module('starter.controllers', [])
         strokeWeight: 2,
         fillColor: '#FF0000',
         map: $scope.map,
-        center: geo.computeOffset(position, Math.random() * 450, Math.random() * 360),
+        center: geo.computeOffset(waypointList[i].position, Math.random() * 450, Math.random() * 360),
         radius: 500,
         visible: false
       });
